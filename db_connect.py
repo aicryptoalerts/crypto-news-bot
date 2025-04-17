@@ -1,23 +1,14 @@
 import psycopg2
-import socket
 import os
 
 print("👋 Script started!")
 
-# Force IPv4 — this avoids Render's IPv6 issue
-orig_getaddrinfo = socket.getaddrinfo
-
-def getaddrinfo_ipv4(*args, **kwargs):
-    return [info for info in orig_getaddrinfo(*args, **kwargs) if info[0] == socket.AF_INET]
-
-socket.getaddrinfo = getaddrinfo_ipv4
-
-# Read connection info from environment variables
-HOST = os.getenv("HOST")
-PORT = int(os.getenv("PORT", 5432))
-DATABASE = os.getenv("DATABASE")
-USER = os.getenv("USER")
-PASSWORD = os.getenv("PASSWORD")
+# Load from environment variables
+HOST = os.getenv("DB_HOST")
+DATABASE = os.getenv("DB_NAME")
+USER = os.getenv("DB_USER")
+PASSWORD = os.getenv("DB_PASSWORD")
+PORT = os.getenv("DB_PORT", 5432)  # fallback to default port 5432
 
 try:
     conn = psycopg2.connect(
