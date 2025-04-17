@@ -41,3 +41,12 @@ try:
 except Exception as e:
     print("❌ Connection failed or insert error:")
     print(e)
+import socket
+
+# Force IPv4
+original_getaddrinfo = socket.getaddrinfo
+def getaddrinfo_ipv4(*args, **kwargs):
+    return [info for info in original_getaddrinfo(*args, **kwargs) if info[0] == socket.AF_INET]
+socket.getaddrinfo = getaddrinfo_ipv4
+import psycopg2
+import os
