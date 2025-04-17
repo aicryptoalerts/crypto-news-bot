@@ -1,3 +1,15 @@
+import psycopg2
+import os
+
+print("👋 Script started!")
+
+# Load from environment variables
+HOST = os.getenv("DB_HOST")
+DATABASE = os.getenv("DB_NAME")
+USER = os.getenv("DB_USER")
+PASSWORD = os.getenv("DB_PASSWORD")
+PORT = os.getenv("DB_PORT", 5432)  # fallback to default port 5432
+
 try:
     conn = psycopg2.connect(
         host=HOST,
@@ -6,11 +18,11 @@ try:
         user=USER,
         password=PASSWORD
     )
-    print("✅ Connected again for insert.")
+    print("✅ Connected to Supabase PostgreSQL!")
 
+    # 🔽 INSERT sample news
     cur = conn.cursor()
-    print("📢 Attempting insert into Supabase...")  # <--- NEW LINE
-
+    print("📢 Attempting insert into Supabase...")
     cur.execute("""
         INSERT INTO news_alerts (headline, source, impact)
         VALUES (%s, %s, %s);
