@@ -1,13 +1,23 @@
 import psycopg2
+import socket
+import os
 
 print("👋 Script started!")
 
-# Supabase connection info
-HOST = "db.zwbjqaxcaiylwrbnvdns.supabase.co"
-DATABASE = "postgres"
-USER = "postgres"
-PASSWORD = "d+bZeF5.VQNL3rV"
-PORT = 5432
+# Force IPv4 — this avoids Render's IPv6 issue
+orig_getaddrinfo = socket.getaddrinfo
+
+def getaddrinfo_ipv4(*args, **kwargs):
+    return [info for info in orig_getaddrinfo(*args, **kwargs) if info[0] == socket.AF_INET]
+
+socket.getaddrinfo = getaddrinfo_ipv4
+
+# Read connection info from environment variables
+HOST = os.getenv("HOST")
+PORT = int(os.getenv("PORT", 5432))
+DATABASE = os.getenv("DATABASE")
+USER = os.getenv("USER")
+PASSWORD = os.getenv("PASSWORD")
 
 try:
     conn = psycopg2.connect(
